@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from langchain.agents import tool
 from langchain.prompts import PromTemplate
 from langchain.tools.render import render_text_description
+from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
@@ -42,4 +43,10 @@ if __name__ == "__main__":
     ).partial(
         tools=render_text_description(tools), 
         tool_names=", ".join([t.name for t in tools])
+    )
+
+    llm = ChatOpenAI(
+        organization = os.getenv('OPENAI_ORG'),
+        temperature=0,
+        stop=["\nObservation"]
     )
