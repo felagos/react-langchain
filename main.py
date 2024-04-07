@@ -3,9 +3,9 @@ from langchain.agents import tool
 from langchain.prompts import PromTemplate
 from langchain.tools.render import render_text_description
 from langchain_openai import ChatOpenAI
+import os
 
 load_dotenv()
-
 
 @tool
 def get_text_length(text: str) -> int:
