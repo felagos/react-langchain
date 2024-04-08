@@ -41,12 +41,17 @@ if __name__ == "__main__":
     prompt = PromTemplate.from_template(
         template=template
     ).partial(
-        tools=render_text_description(tools), 
+        tools=render_text_description(tools),
         tool_names=", ".join([t.name for t in tools])
     )
 
     llm = ChatOpenAI(
-        organization = os.getenv('OPENAI_ORG'),
+        organization=os.getenv('OPENAI_ORG'),
         temperature=0,
         stop=["\nObservation"]
     )
+
+    agent = {"input": lambda x: x["input"]} | prompt | llm
+    agent.invoke({
+        "input": "What is the length of the text 'Hello world' in characters?"
+    })
