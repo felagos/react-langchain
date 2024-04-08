@@ -71,18 +71,21 @@ if __name__ == "__main__":
         "agent_scratchpad": lambda x: format_log_to_str(x["agent_scratchpad"])
     } | prompt | llm | ReActSingleInputOutputParser()
 
-    agent_step: Union[AgentAction, AgentFinish] = agent.invoke({
-        "input": "Write a haiku about dogs and then count the length by characters?",
-        "agent_scratchpad": intermediate_steps
-    })
+    agent_step = ""
+    while not isinstance(agent_step, AgentFinish):
 
-    if isinstance(agent_step, AgentAction):
-        tool_name = agent_step.tool
-        tool_to_use = find_tool_by_name(tools, tool_name)
-        tool_input = agent_step.tool_input
+        agent_step: Union[AgentAction, AgentFinish] = agent.invoke({
+            "input": "Write a haiku about dogs and then count the length by characters?",
+            "agent_scratchpad": intermediate_steps
+        })
 
-        observation = tool_to_use.func(str(tool_input))
-        intermediate_steps.append((agent_step, str(observation)))
+        if isinstance(agent_step, AgentAction):
+            tool_name = agent_step.tool
+            tool_to_use = find_tool_by_name(tools, tool_name)
+            tool_input = agent_step.tool_input
+
+            observation = tool_to_use.func(str(tool_input))
+            intermediate_steps.append((agent_step, str(observation)))
 
     if isinstance(agent_step, AgentFinish):
         print(agent_step.return_values)
