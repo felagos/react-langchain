@@ -1,13 +1,10 @@
-from typing import Union, List
-
 import os
 from dotenv import load_dotenv
 from langchain.agents import tool
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
-from langchain.schema import AgentAction, AgentFinish
-from langchain.tools import Tool
 from langchain.tools.render import render_text_description
+from langchain.agents.output_parsers import ReActSingleInputOutputParser
 
 load_dotenv()
 
@@ -55,7 +52,7 @@ if __name__ == "__main__":
         stop=["\nObservation"]
     )
 
-    agent = {"input": lambda x: x["input"]} | prompt | llm
+    agent = {"input": lambda x: x["input"]} | prompt | llm | ReActSingleInputOutputParser()
     res = agent.invoke({
         "input": "What is the length of the text 'Hello world' in characters?"
     })
