@@ -1,9 +1,13 @@
+from typing import Union, List
+
+import os
 from dotenv import load_dotenv
 from langchain.agents import tool
-from langchain.prompts import PromTemplate
-from langchain.tools.render import render_text_description
 from langchain_openai import ChatOpenAI
-import os
+from langchain.prompts import PromptTemplate
+from langchain.schema import AgentAction, AgentFinish
+from langchain.tools import Tool
+from langchain.tools.render import render_text_description
 
 load_dotenv()
 
@@ -38,7 +42,7 @@ if __name__ == "__main__":
     Thought
     """
 
-    prompt = PromTemplate.from_template(
+    prompt = PromptTemplate.from_template(
         template=template
     ).partial(
         tools=render_text_description(tools),
@@ -52,6 +56,8 @@ if __name__ == "__main__":
     )
 
     agent = {"input": lambda x: x["input"]} | prompt | llm
-    agent.invoke({
+    res = agent.invoke({
         "input": "What is the length of the text 'Hello world' in characters?"
     })
+
+    print(res)
